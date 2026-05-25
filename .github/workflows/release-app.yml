@@ -1,0 +1,51 @@
+name: Release App
+
+on:
+  push:
+    tags:
+      - "app-v*"
+
+permissions:
+  contents: write
+  deployments: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      deployments: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: Create keystore.jks
+        working-directory: ./CoinSec-App
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+
+      - name: Build App APK
+        working-directory: ./CoinSec-App
+        run: |
+          ./gradlew assembleRelease --no-build-cache
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Create Release & Upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "App ${{ github.ref_name }}"
+          body: |
+            ### CoinSec Android App
+            版本：${{ github.ref_name }}
+            自动构建发布
+          files: CoinSec-App/app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
