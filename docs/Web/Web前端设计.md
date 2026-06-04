@@ -10,7 +10,9 @@
 | vue-router | ^4.x | 路由管理 |
 | Pinia | ^2.x | 状态管理 |
 | Axios | ^1.x | HTTP 请求 |
-| Chart.js / vue-chartjs | 待定 | 图表统计 |
+| Element Plus | ^2.x | UI 组件库 |
+| ECharts / vue-echarts | 待定 | 图表统计 |
+| @element-plus/icons-vue | ^2.x | 图标库 |
 | pnpm | - | 包管理 |
 
 ## 项目结构
@@ -198,6 +200,5 @@ src/
 
 ## 待定事项
 
-- 图表库选型（轻量优先，考虑 Chart.js 或轻量替代）
+- 图表库选型（ECharts / Chart.js）
 - 移动端适配方案
-- 是否使用 UI 组件库（暂定手写样式，保持轻量）
