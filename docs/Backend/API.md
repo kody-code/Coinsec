@@ -11,6 +11,50 @@
 
 ---
 
+## 身份验证机制
+
+本系统使用 **Sa-Token** 进行身份认证，采用 token 验证方式。
+
+### 认证流程
+
+```
+用户登录 → 后端验证账号密码 → StpUtil.login(userId) 生成 token
+  → 返回 token 给前端 → 前端存储 token
+  → 后续请求在 Header 中携带 satoken: {token}
+  → Sa-Token 拦截器自动校验 → 通过/拒绝
+```
+
+### 前端集成
+
+登录后将 token 存入本地存储，并在每次请求时携带：
+
+```javascript
+// 登录成功后保存 token
+uni.setStorageSync('satoken', token);
+
+// 后续请求在 header 中携带
+uni.request({
+    url: 'https://api.example.com/api/records',
+    header: {
+        "satoken": uni.getStorageSync('satoken')
+    },
+    success: (res) => { ... }
+});
+```
+
+### 接口保护规则
+
+| 路径 | 保护策略 |
+|------|---------|
+| `POST /api/auth/login` | 不校验 token |
+| `POST /api/auth/setup` | 不校验 token |
+| `POST /api/auth/logout` | 需要 token |
+| `/api/**`（其他） | 需要 token |
+
+未登录时返回：`{ "code": 401, "msg": "未登录或 token 已过期", "data": null }`
+
+---
+
 ## 1. Auth 模块 (`/api/auth`)
 
 ### 首次初始化

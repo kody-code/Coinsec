@@ -93,6 +93,64 @@ public class GlobalExceptionHandler {
 - 优先逻辑删除（`is_deleted`）
 - 事务使用 `@Transactional(rollbackFor = Exception.class)`
 
+## 认证与授权（Sa-Token）
+
+本项目使用 **Sa-Token** 进行身份认证。
+
+### 配置（application.yaml）
+
+```yaml
+sa-token:
+  token-name: satoken
+  timeout: 2592000
+  active-timeout: -1
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  is-log: true
+```
+
+### 核心 API
+
+| 操作 | 代码 |
+|------|------|
+| 登录 | `StpUtil.login(userId)` |
+| 校验登录 | `StpUtil.checkLogin()` |
+| 获取当前用户 ID | `StpUtil.getLoginIdAsLong()` |
+| 登出 | `StpUtil.logout()` |
+
+### 路由保护（SaTokenConfig）
+
+```java
+@Configuration
+public class SaTokenConfig implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/auth/login", "/api/auth/setup");
+    }
+}
+```
+
+### 前端请求方式
+
+所有需要认证的请求在 Header 中携带：
+```
+satoken: {token}
+```
+
+### Token 异常处理
+
+在 `GlobalExceptionHandler` 中捕获 `NotLoginException` 返回 401。
+
+### 统一响应
+
+所有接口返回统一格式：
+```json
+{ "code": 200, "msg": "success", "data": { ... } }
+```
+
 ## API 路径版本规范
 
 统一前缀 `/api/v{n}`，当前为 `/api/v1`。
