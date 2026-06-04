@@ -60,7 +60,7 @@ POST /api/auth/login
 ```
 POST /api/auth/logout
 ```
-**Header**: `Authorization: Bearer {token}`
+**Header**: `satoken: {token}`
 **响应 data**: null
 
 ---
@@ -71,7 +71,7 @@ POST /api/auth/logout
 ```
 GET /api/user/info
 ```
-**Header**: `Authorization: Bearer {token}`
+**Header**: `satoken: {token}`
 **响应 data**:
 ```json
 {
