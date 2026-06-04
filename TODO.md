@@ -42,9 +42,9 @@
 - [x] 编写测试
 
 ### 6. 转账模块（依赖：账户模块）
-- [ ] 转账 `POST /api/transfers`
-- [ ] 转账记录 `GET /api/transfers`（分页 + 筛选）
-- [ ] 编写测试
+- [x] 转账 `POST /api/transfers`（含余额同步）
+- [x] 转账记录 `GET /api/transfers`（分页 + 时间筛选）
+- [x] 编写测试
 
 ## 二、APP 开发（依赖：后端 API 完成）
 
